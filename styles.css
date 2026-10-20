@@ -1,0 +1,14 @@
+.mqi-modal { width: min(760px, 95vw); }
+.mqi-search { width: 100%; }
+.mqi-category { width: 100%; margin-top: 10px; }
+.mqi-help { color: var(--text-muted); font-size: var(--font-ui-small); }
+.mqi-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-height: 60vh; overflow-y: auto; padding: 4px; }
+.mqi-card { display: flex; flex-direction: column; align-items: stretch; gap: 8px; height: auto; min-height: 100px; padding: 12px; text-align: left; white-space: normal; }
+.mqi-card code { display: block; color: var(--text-muted); white-space: pre-wrap; overflow-wrap: anywhere; font-size: 11px; max-height: 90px; overflow: hidden; }
+.mqi-card.is-active, .mqi-card:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 1px; }
+@media (max-width: 600px) { .mqi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 360px) { .mqi-grid { grid-template-columns: 1fr; } }
+
+input[type="number"].mqi-number { width: 166px; max-width: 100%; appearance: auto !important; -webkit-appearance: auto !important; }
+input[type="number"].mqi-number::-webkit-inner-spin-button,
+input[type="number"].mqi-number::-webkit-outer-spin-button { display: inline-block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; -webkit-appearance: inner-spin-button !important; }

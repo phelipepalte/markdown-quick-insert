@@ -1,0 +1,20 @@
+{
+  "name": "markdown-quick-insert",
+  "version": "0.2.6",
+  "private": true,
+  "description": "Searchable Markdown template grid for Obsidian",
+  "scripts": {
+    "build": "tsc --noEmit && node esbuild.mjs",
+    "dev": "node esbuild.mjs --watch",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.28.2",
+    "happy-dom": "^21.0.3",
+    "obsidian": "latest",
+    "typescript": "^5.7.0",
+    "vitest": "^5.0.5"
+  },
+  "type": "module"
+}

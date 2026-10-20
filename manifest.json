@@ -1,0 +1,9 @@
+{
+  "id": "markdown-quick-insert",
+  "name": "Markdown Quick Insert",
+  "version": "0.2.6",
+  "minAppVersion": "1.8.0",
+  "description": "Insert Markdown templates from a searchable grid with English and Brazilian Portuguese support.",
+  "author": "Markdown Quick Insert contributors",
+  "isDesktopOnly": false
+}
