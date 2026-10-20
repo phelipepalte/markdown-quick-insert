@@ -1,8 +1,31 @@
 # Markdown Quick Insert
 
-Version **0.2.6**. A searchable Obsidian insertion grid with **52 entries**, English/Brazilian Portuguese translations, automatic vault selectors, and contextual selection formatting.
+Insert Markdown formatting, tables, links, and embeds through a searchable grid inside Obsidian. Format selected text or insert editable examples without remembering Markdown syntax.
+
+Version **0.2.6**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
+
+## Requirements and compatibility
+
+- Obsidian 1.8.0 or newer, as declared in the manifest. The minimum version still needs real-host verification before submission.
+- An open Markdown note in Source mode or Live Preview. Reading view selections are not supported.
+- The manifest permits desktop and mobile loading. Mobile behavior has not been verified; the keyboard workflow requires a keyboard.
 
 ## Installation and upgrade
+
+### Community directory
+
+Publication in the Obsidian Community directory has not yet been confirmed. Once the plugin is listed, open Settings → Community plugins → Browse, search for **Markdown Quick Insert**, then select Install and Enable.
+
+### Manual installation from a release
+
+1. Download `main.js`, `manifest.json`, and `styles.css` from a published GitHub release of this repository. Use files from the same release, not GitHub's automatically generated source archives.
+2. Create `<vault>/.obsidian/plugins/markdown-quick-insert/` if it does not exist.
+3. Copy the three files into that folder.
+4. Reload Obsidian, then enable **Markdown Quick Insert** in Settings → Community plugins.
+
+To upgrade, disable the plugin, replace those three files, and enable it again. Preserve any existing `data.json`, which stores the language preference. If no release is available, build from source below.
+
+### Build from source
 
 Run `npm ci` and `npm run build`. Manually copy `main.js`, `manifest.json`, and `styles.css` into `<vault>/.obsidian/plugins/markdown-quick-insert/`, then enable or reload the plugin. Keep existing `data.json` to preserve language settings.
 
@@ -60,6 +83,20 @@ This is a broad catalog, not every possible native construct or combination. YAM
 ## Language
 
 Automatic uses the public Obsidian language API. Only `pt-BR` selects Brazilian Portuguese; every other language falls back to English. Override this in Settings → Markdown Quick Insert. Reopen the grid after changing language. Reload the plugin to refresh the registered command name.
+
+## Privacy and data
+
+- The plugin processes the active note and vault metadata locally to format text and offer file, heading, block, alias, and tag selectors.
+- It stores the language preference through Obsidian's plugin data API in the vault configuration. Inserted content is saved in the notes themselves.
+- The plugin makes no network requests and includes no analytics, advertising, or telemetry. No account or external service is required by the plugin.
+- Vault or configuration synchronization is handled by the service you choose, not by this plugin.
+- Opening external links or displaying remote images inserted into notes can cause Obsidian or the browser to contact those external services.
+
+## Support and feedback
+
+Report bugs and feature requests through this repository's GitHub Issues, if enabled. Include the plugin version, Obsidian version, operating system, reproduction steps, and expected versus actual behavior. Remove private note content, credentials, and personal file paths from reports and screenshots.
+
+See [the changelog](docs/changelog.md) for release history. This is a community plugin and is not an official Obsidian product.
 
 ## Development and validation
 

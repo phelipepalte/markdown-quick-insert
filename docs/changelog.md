@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased - Documentation - 2026-10-20
+
+- Clarify the product summary, requirements, and unverified mobile and minimum-version compatibility.
+- Add manual release installation, upgrade instructions, and conditional community-directory installation.
+- Document local data processing, external content, support reporting, and release history.
+- Documentation only; plugin code and version remain unchanged.
+
+
 ## 0.2.6 - 2026-10-20
 
 - Submit the table modal with Enter while Alignment is focused, using its current selected value and existing validation.
