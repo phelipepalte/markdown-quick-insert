@@ -2,6 +2,10 @@
 
 ## Unreleased - Documentation - 2026-10-20
 
+- Add four user-provided screenshots and an English README gallery covering the insertion grid, tables, references, and note selection.
+
+- Link the Markdown Quick Insert privacy policy hosted on the Reve Signum Studios website.
+
 - Clarify the product summary, requirements, and unverified mobile and minimum-version compatibility.
 - Add manual release installation, upgrade instructions, and conditional community-directory installation.
 - Document local data processing, external content, support reporting, and release history.

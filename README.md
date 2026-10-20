@@ -4,6 +4,32 @@ Insert Markdown formatting, tables, links, and embeds through a searchable grid 
 
 Version **0.2.6**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
 
+## Screenshots
+
+### Searchable insertion grid
+
+Browse Markdown templates with previews, search, and category filters.
+
+![Searchable Markdown insertion grid with formatting previews](docs/screenshots/insertion-grid.png)
+
+### Table options
+
+Choose the number of columns, example rows, and column alignment before inserting a table.
+
+![Table configuration with columns, example rows, and alignment](docs/screenshots/table-options.png)
+
+### References
+
+Find links, note references, heading and block references, tags, and footnotes in one category.
+
+![References category in the Markdown insertion grid](docs/screenshots/reference-options.png)
+
+### Note selector
+
+Choose an existing note by name, path, or alias. Full paths help distinguish notes with the same name.
+
+![Searchable vault note selector showing note names and paths](docs/screenshots/note-selector.png)
+
 ## Requirements and compatibility
 
 - Obsidian 1.8.0 or newer, as declared in the manifest. The minimum version still needs real-host verification before submission.
@@ -85,6 +111,8 @@ This is a broad catalog, not every possible native construct or combination. YAM
 Automatic uses the public Obsidian language API. Only `pt-BR` selects Brazilian Portuguese; every other language falls back to English. Override this in Settings → Markdown Quick Insert. Reopen the grid after changing language. Reload the plugin to refresh the registered command name.
 
 ## Privacy and data
+
+Read the [Privacy Policy](https://reve-signum-studios.web.app/privacy.html?app=markdown-quick-insert) (Brazilian Portuguese).
 
 - The plugin processes the active note and vault metadata locally to format text and offer file, heading, block, alias, and tag selectors.
 - It stores the language preference through Obsidian's plugin data API in the vault configuration. Inserted content is saved in the notes themselves.
