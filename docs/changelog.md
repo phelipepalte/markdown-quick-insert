@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.11 - 2026-10-20
+
+- Publish releases automatically after pushes or merges into main, using the version declared in manifest.json.
+- Preserve version tag and manual triggers; validate tag/version matching only for tag pushes.
+- Skip publication when the version already has a release, without overwriting existing assets.
+- Document automatic releases and synchronize project version metadata.
+
 ## 0.2.10 - 2026-10-20
 
 - Register searchable language settings with Obsidian 1.13's declarative settings API.
