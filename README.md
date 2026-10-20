@@ -2,7 +2,7 @@
 
 Insert Markdown formatting, tables, links, and embeds through a searchable grid inside Obsidian. Format selected text or insert editable examples without remembering Markdown syntax.
 
-Version **0.2.11**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
+Version **0.2.12**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
 
 ## Screenshots
 
@@ -160,7 +160,7 @@ Licensed under the GNU General Public License v3.0 only (GPL-3.0-only). See [LIC
 
 ## Automated releases
 
-Push or merge changes into `main` to automatically test, build, and publish the version recorded in manifest.json. Each new release requires a new project version; pushes with an already published version run validation but skip publication. Version tags without a v prefix (for example, `0.2.11`) and Actions → Release → Run workflow remain supported. The workflow does not increment versions.
+Push or merge changes into `main` to automatically test, build, and publish the version recorded in manifest.json. Each new release requires a new project version; pushes with an already published version run validation but skip publication. Version tags without a v prefix (for example, `0.2.12`) and Actions → Release → Run workflow remain supported. The workflow does not increment versions.
 
 Before releasing, synchronize manifest.json, package.json, package-lock.json, and versions.json, and add a versioned entry in docs/changelog.md. Commit and push all release changes first.
 

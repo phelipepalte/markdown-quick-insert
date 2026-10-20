@@ -1,4 +1,7 @@
-import { expect, it, vi } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
+import * as obsidian from './obsidian-mock';
+
+afterEach(() => vi.restoreAllMocks());
 import QuickInsertPlugin from '../src/main';
 
 async function settings() {
@@ -25,10 +28,14 @@ it('exposes searchable language settings and persists changes through the modern
 });
 
 it('renders and refreshes the legacy dropdown when the modern API is unavailable', async () => {
+  vi.spyOn(obsidian, 'requireApiVersion').mockReturnValue(false);
   const { plugin, tab } = await settings();
+  tab.update = vi.fn(() => { throw new Error('Modern API must not run on a legacy host'); });
   tab.display();
   expect(tab.containerEl.querySelector('select').value).toBe('auto');
   await tab.setControlValue('language', 'en');
+  expect(tab.update).not.toHaveBeenCalled();
+  expect(obsidian.requireApiVersion).toHaveBeenCalledWith('1.13.0');
   expect(tab.containerEl.querySelectorAll('select')).toHaveLength(1);
   expect(tab.containerEl.querySelector('select').value).toBe('en');
   expect(tab.containerEl.querySelector('p').textContent).toBe(plugin.t.hotkeyHelp);

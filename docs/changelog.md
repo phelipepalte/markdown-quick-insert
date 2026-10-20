@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.12 - 2026-10-20
+
+- Guard the Obsidian 1.13 settings update API with requireApiVersion('1.13.0') instead of a method-existence check, making the compatibility boundary explicit to the API checker.
+- Preserve Obsidian 1.8.7 support and the legacy language settings renderer.
+- Verify that older hosts never call the modern update API, even when a method with that name exists.
+- Synchronize release version metadata. The Community review must be rerun after publication.
+
 ## 0.2.11 - 2026-10-20
 
 - Publish releases automatically after pushes or merges into main, using the version declared in manifest.json.

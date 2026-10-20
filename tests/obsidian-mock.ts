@@ -68,3 +68,5 @@ export class TFile {
 export const getLanguage = () => 'en';
 export const getAllTags = (cache: any) => [...(cache.tags ?? []).map((tag: any) => tag.tag), ...(cache.frontmatter?.tags ?? []).map((tag: string) => '#' + tag)];
 export const parseFrontMatterAliases = (frontmatter: any) => frontmatter?.aliases ?? [];
+
+export function requireApiVersion(_version: string) { return true; }

@@ -1,4 +1,4 @@
-import { type SettingDefinitionItem, Editor, getLanguage, getAllTags, MarkdownView, Modal, Notice, parseFrontMatterAliases, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { type SettingDefinitionItem, Editor, requireApiVersion, getLanguage, getAllTags, MarkdownView, Modal, Notice, parseFrontMatterAliases, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 import { Category, dictionary, filterTemplates, Language, prepareInsertion, Template, templates, expand } from './templates';
 import { buildTable, calloutTypes, Choice, codeLanguages, literal, matchesMedia, nextIdentifier, wrapSelection } from './automation';
 import { ChoiceModal, OptionsModal } from './choices';
@@ -51,7 +51,7 @@ class Settings extends PluginSettingTab {
     if (key !== 'language' || (value !== 'auto' && value !== 'en' && value !== 'pt-BR')) return;
     this.plugin.language = value;
     await this.plugin.saveData({ language: value });
-    if (typeof this.update === 'function') this.update();
+    if (requireApiVersion('1.13.0')) this.update();
     else this.renderLegacy();
   }
   // Obsidian versions before 1.13 use this fallback instead of setting definitions.
