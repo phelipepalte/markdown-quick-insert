@@ -43,8 +43,8 @@ function choose(query: string) {
   modal.close(); modal.onChooseSuggestion(choices[0]);
 }
 function submit() { [...document.querySelectorAll('button')].find(el => el.textContent === 'Insert')!.click(); }
-it('registers the command without a default shortcut and inserts a note found by alias', () => {
-  expect((plugin as any).commands[0].hotkeys).toBeUndefined();
+it('registers the default shortcut and inserts a note found by alias', () => {
+  expect((plugin as any).commands[0].hotkeys).toEqual([{ modifiers: ['Mod'], key: '.' }]);
   open('Note reference'); choose('reference');
   expect(editor.text).toBe('Before [[Study/Note|Reference]]after');
   expect(app.fileManager.generateMarkdownLink).toHaveBeenCalledWith(files[1], 'Current.md', '', 'Reference');

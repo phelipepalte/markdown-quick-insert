@@ -22,7 +22,7 @@ export default class QuickInsertPlugin extends Plugin {
       if (view?.file && view.editor.hasFocus()) this.beforeCommand = captureEditor(view.editor, view.file.path);
     }, true);
     this.registerDomEvent(document, 'pointerdown', () => { this.beforeCommand = undefined; }, true);
-    this.addCommand({ id: 'open-picker', name: this.t.command, editorCallback: (editor, view) => {
+    this.addCommand({ id: 'open-picker', name: this.t.command, hotkeys: [{ modifiers: ['Mod'], key: '.' }], editorCallback: (editor, view) => {
       const snapshot = resolveEditorSnapshot(captureEditor(editor, view.file?.path ?? ''), this.beforeCommand);
       this.beforeCommand = undefined;
       new Picker(this, editor, view.file?.path ?? '', snapshot).open();

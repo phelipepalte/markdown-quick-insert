@@ -13,7 +13,7 @@ const pt: typeof en = {
   displayText: 'Texto exibido', width: 'Largura da imagem (pixels, opcional)', page: 'Página do PDF (opcional)', invalidNumber: 'Informe um número inteiro positivo ou deixe vazio.', fold: 'Comportamento de recolhimento', unfolded: 'Sempre aberto', expanded: 'Recolhível, aberto', collapsed: 'Recolhível, fechado',
   command: 'Abrir inserção rápida de Markdown', title: 'Inserir Markdown', search: 'Pesquisar templates…', empty: 'Nenhum template encontrado.',
   help: 'Digite para pesquisar · Setas para navegar · Enter para inserir · Esc para fechar', language: 'Idioma', languageHelp: 'Automático usa o idioma do Obsidian. Reabra a janela após alterar.', automatic: 'Automático',
-  hotkeyHelp: 'Defina um atalho em Configurações → Teclas de atalho → Markdown Quick Insert.', stale: 'O documento mudou enquanto a janela estava aberta. Reabra a janela.',
+  hotkeyHelp: 'Atalho padrão: Ctrl + . (Command + . no macOS). Se houver conflito ou não funcionar, verifique ou altere em Configurações → Teclas de atalho → Markdown Quick Insert.', stale: 'O documento mudou enquanto a janela estava aberta. Reabra a janela.',
   heading: 'Título', table: 'Tabela', bullet: 'Lista com marcadores', numbered: 'Lista numerada', checklist: 'Lista de tarefas', quote: 'Citação', code: 'Bloco de código', link: 'Link', callout: 'Callout', separator: 'Separador',
   headingText: 'Texto do título', header: 'Cabeçalho', cell: 'Exemplo', item: 'Item da lista', task: 'Tarefa', quoteText: 'Texto citado', codeText: '// Seu código aqui', linkText: 'Texto do link', calloutTitle: 'Título', calloutText: 'Conteúdo do callout'
 };

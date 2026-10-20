@@ -2,7 +2,18 @@
 
 Insert Markdown formatting, tables, links, and embeds through a searchable grid inside Obsidian. Format selected text or insert editable examples without remembering Markdown syntax.
 
-Version **0.2.12**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
+Version **0.2.13**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
+
+## How to use
+
+1. Open a Markdown note in Source mode or Live Preview.
+2. The default shortcut is **Ctrl + .** (**Command + .** on macOS). If it conflicts with another command or does not work, open **Settings → Hotkeys**, search for **Markdown Quick Insert**, and check or change the shortcut.
+3. Press **Ctrl + .** to open the menu. You can also run **Markdown Quick Insert: Open Markdown quick insert** from the command palette.
+4. Type to search templates, or use the category dropdown to filter the available entries.
+5. Use the **arrow keys** to navigate the cards, then press **Enter** to choose an entry. You can also click a card.
+6. Complete any follow-up options, such as table dimensions or the target note, to insert the result.
+
+Use **Tab** to move between controls and **Esc** to close or cancel. Select text before opening the menu to format that selection; open it without a selection to insert a template. Cancelling leaves the note unchanged.
 
 ## Screenshots
 
@@ -56,12 +67,6 @@ To upgrade, disable the plugin, replace those three files, and enable it again. 
 Run `npm ci` and `npm run build`. Manually copy `main.js`, `manifest.json`, and `styles.css` into `<vault>/.obsidian/plugins/markdown-quick-insert/`, then enable or reload the plugin. Keep existing `data.json` to preserve language settings.
 
 The project does not install itself, create notes, alter reference targets, or change vault configuration. Only an explicit insertion changes the active editor. Discovery uses the public Obsidian API; the plugin makes no network requests.
-
-## Use
-
-Open a Markdown note in editing mode. Run **Markdown Quick Insert: Open Markdown quick insert** from the command palette. No default shortcut is assigned. Assign a shortcut, such as Ctrl+. or Command+., in Settings → Hotkeys.
-
-Search or select a category: Text, Structures, References, Embeds, or Advanced. Use arrows to browse cards, Enter to choose, Tab to focus controls, and Escape to cancel. Follow-up selectors use Obsidian's standard searchable suggestions. Cancellation leaves the editor unchanged.
 
 ## Format selected text
 
@@ -160,7 +165,7 @@ Licensed under the GNU General Public License v3.0 only (GPL-3.0-only). See [LIC
 
 ## Automated releases
 
-Push or merge changes into `main` to automatically test, build, and publish the version recorded in manifest.json. Each new release requires a new project version; pushes with an already published version run validation but skip publication. Version tags without a v prefix (for example, `0.2.12`) and Actions → Release → Run workflow remain supported. The workflow does not increment versions.
+Push or merge changes into `main` to automatically test, build, and publish the version recorded in manifest.json. Each new release requires a new project version; pushes with an already published version run validation but skip publication. Version tags without a v prefix (for example, `0.2.13`) and Actions → Release → Run workflow remain supported. The workflow does not increment versions.
 
 Before releasing, synchronize manifest.json, package.json, package-lock.json, and versions.json, and add a versioned entry in docs/changelog.md. Commit and push all release changes first.
 

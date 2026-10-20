@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.13 - 2026-10-20
+
+- Set the default picker shortcut to Ctrl + . on Windows/Linux and Command + . on macOS using Obsidian's Mod modifier.
+- Explain how to check or change conflicting shortcuts in the usage instructions and both settings translations.
+- Place usage instructions before screenshots, covering search, categories, arrow keys, Enter, Tab, Esc, and selected text.
+- Update the command registration test and synchronize project version metadata.
+
 ## 0.2.12 - 2026-10-20
 
 - Guard the Obsidian 1.13 settings update API with requireApiVersion('1.13.0') instead of a method-existence check, making the compatibility boundary explicit to the API checker.
