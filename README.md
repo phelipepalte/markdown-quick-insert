@@ -2,7 +2,7 @@
 
 Insert Markdown formatting, tables, links, and embeds through a searchable grid inside Obsidian. Format selected text or insert editable examples without remembering Markdown syntax.
 
-Version **0.2.6**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
+Version **0.2.7**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
 
 ## Screenshots
 
@@ -34,7 +34,7 @@ Choose an existing note by name, path, or alias. Full paths help distinguish not
 
 - Obsidian 1.8.0 or newer, as declared in the manifest. The minimum version still needs real-host verification before submission.
 - An open Markdown note in Source mode or Live Preview. Reading view selections are not supported.
-- The manifest permits desktop and mobile loading. Mobile behavior has not been verified; the keyboard workflow requires a keyboard.
+- Desktop only. Mobile installation is not supported (`isDesktopOnly: true`).
 
 ## Installation and upgrade
 
@@ -151,3 +151,8 @@ Manual checks in an authorized test vault:
 6. Test automatic/manual languages, light/dark themes, and narrow screens.
 
 Official references: [Internal links](https://obsidian.md/help/links), [Embeds](https://obsidian.md/help/embeds), [Callouts](https://obsidian.md/help/callouts), and [Vault API](https://docs.obsidian.md/Plugins/Vault).
+
+
+## License
+
+Licensed under the GNU General Public License v3.0 only (GPL-3.0-only). See [LICENSE](LICENSE) for the full terms. This software is provided without warranty, as described in the license.

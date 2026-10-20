@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.7 - 2026-10-20
+
+- Restrict installation to desktop by setting `isDesktopOnly` to `true`.
+- Update README compatibility information and synchronize release version metadata.
+- Add the complete GNU GPL v3.0 license, declare GPL-3.0-only in package metadata, and link the license from the README. Preserve the separate privacy policy link.
+
+
 ## Unreleased - Documentation - 2026-10-20
 
 - Add four user-provided screenshots and an English README gallery covering the insertion grid, tables, references, and note selection.
