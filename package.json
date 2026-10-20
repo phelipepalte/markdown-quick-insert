@@ -1,6 +1,6 @@
 {
   "name": "markdown-quick-insert",
-  "version": "0.2.7",
+  "version": "0.2.9",
   "private": true,
   "description": "Searchable Markdown template grid for Obsidian",
   "scripts": {

@@ -61,7 +61,7 @@ export function expand(source: string) {
     const start = text.length;
     text += match[1];
     selection ??= { start, end: text.length };
-    end = match.index! + match[0].length;
+    end = match.index + match[0].length;
   }
   text += source.slice(end);
   return { text, selection: selection ?? { start: text.length, end: text.length } };

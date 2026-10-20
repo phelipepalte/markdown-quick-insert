@@ -2,7 +2,7 @@
 
 Insert Markdown formatting, tables, links, and embeds through a searchable grid inside Obsidian. Format selected text or insert editable examples without remembering Markdown syntax.
 
-Version **0.2.7**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
+Version **0.2.9**, with **52 entries**, English/Brazilian Portuguese translations, vault-aware selectors, and contextual selection formatting.
 
 ## Screenshots
 
@@ -32,7 +32,7 @@ Choose an existing note by name, path, or alias. Full paths help distinguish not
 
 ## Requirements and compatibility
 
-- Obsidian 1.8.0 or newer, as declared in the manifest. The minimum version still needs real-host verification before submission.
+- Obsidian 1.8.7 or newer, as declared in the manifest. The minimum version still needs real-host verification before submission.
 - An open Markdown note in Source mode or Live Preview. Reading view selections are not supported.
 - Desktop only. Mobile installation is not supported (`isDesktopOnly: true`).
 
@@ -59,13 +59,13 @@ The project does not install itself, create notes, alter reference targets, or c
 
 ## Use
 
-Open a Markdown note in editing mode. Press **Ctrl+.**, or run **Markdown Quick Insert: Open Markdown quick insert**. Reassign the shortcut in Settings → Hotkeys. Control is the default on every platform; macOS users may assign Command.
+Open a Markdown note in editing mode. Run **Markdown Quick Insert: Open Markdown quick insert** from the command palette. No default shortcut is assigned. Assign a shortcut, such as Ctrl+. or Command+., in Settings → Hotkeys.
 
 Search or select a category: Text, Structures, References, Embeds, or Advanced. Use arrows to browse cards, Enter to choose, Tab to focus controls, and Escape to cancel. Follow-up selectors use Obsidian's standard searchable suggestions. Cancellation leaves the editor unchanged.
 
 ## Format selected text
 
-Select text before pressing Ctrl+. to open **Format selected text**. This mode shows only compatible transformations, with Markdown previews using the actual selection. It hides insertion-only entries such as sample tables, embeds, separators, and existing tags. With no selection, the full insertion catalog remains available.
+Select text before running the command or using your assigned shortcut to open **Format selected text**. This mode shows only compatible transformations, with Markdown previews using the actual selection. It hides insertion-only entries such as sample tables, embeds, separators, and existing tags. With no selection, the full insertion catalog remains available.
 
 Selection endpoints are captured before keyboard shortcut dispatch, then verified against the source editor and document. A recent selection can be recovered if dispatch collapses it. Reversed selections are normalized. Cached ranges expire after 500 ms, are consumed once, and are cleared on pointer interaction. Select text in the Markdown editor (Source or Live Preview); selecting rendered text in Reading view is not supported.
 
@@ -143,7 +143,7 @@ Automated tests cover language resolution, templates, filtering, boundaries, sel
 
 Manual checks in an authorized test vault:
 
-1. Test Ctrl+., search/categories, arrows, Enter, Tab, Escape, and shortcut reassignment.
+1. Test the assigned shortcut, search/categories, arrows, Enter, Tab, Escape, and shortcut reassignment.
 2. Test duplicate filenames and aliases under both wikilink and Markdown-link preferences.
 3. Test headings/blocks, missing IDs, cancellation, and stale source/target handling.
 4. Test attachments, image width, PDF page, table options, callout collapse, and code languages.
@@ -156,3 +156,12 @@ Official references: [Internal links](https://obsidian.md/help/links), [Embeds](
 ## License
 
 Licensed under the GNU General Public License v3.0 only (GPL-3.0-only). See [LICENSE](LICENSE) for the full terms. This software is provided without warranty, as described in the license.
+
+
+## Automated releases
+
+Push a version tag without a v prefix (for example, `0.2.9`), or select Actions → Release → Run workflow on the branch containing the release commit. Manual runs use the version already recorded in manifest.json; they do not increment it.
+
+Before releasing, synchronize manifest.json, package.json, package-lock.json, and versions.json, and add a versioned entry in docs/changelog.md. Commit and push all release changes first.
+
+The workflow validates metadata, installs locked dependencies, runs tests, builds the plugin, and publishes a GitHub release with main.js, manifest.json, and styles.css. Release notes come from the matching changelog section. It uses the automatic GitHub token; no personal access token is required. Existing releases are not overwritten. A failed run can be inspected in Actions. Obsidian Community review remains separate.

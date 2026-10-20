@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.2.9 - 2026-10-20
+
+- Add GitHub Actions releases triggered by version tags or manual dispatch.
+- Validate matching release metadata, run tests and production build, and upload all three plugin assets.
+- Extract release notes from the versioned changelog and document release operation.
+- Synchronize project version metadata.
+
+
+## 0.2.8 - 2026-10-20
+
+- Require Obsidian 1.8.7, the first version supporting getLanguage().
+- Remove the default hotkey and document user-assigned shortcuts.
+- Validate stored language settings as unknown data and use a typed table alignment array.
+- Remove an unnecessary regular-expression escape and match index assertion.
+- Retain legacy settings rendering for pre-1.13 compatibility and scoped numeric spinner overrides.
+
+### Validation
+
+- All 84 automated tests and the production build passed. The Obsidian Community review must be rerun against the new release.
+
+
 ## 0.2.7 - 2026-10-20
 
 - Restrict installation to desktop by setting `isDesktopOnly` to `true`.

@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Check out release source
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Validate release metadata and extract notes
+        id: metadata
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const read = path => JSON.parse(fs.readFileSync(path, 'utf8'));
+          const manifest = read('manifest.json');
+          const version = manifest.version;
+          if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error('Expected an x.y.z version without a v prefix.');
+          if (process.env.GITHUB_EVENT_NAME === 'push' && process.env.GITHUB_REF_NAME !== version) throw new Error('Tag must match manifest version.');
+          if (process.env.GITHUB_EVENT_NAME === 'workflow_dispatch' && process.env.GITHUB_REF_TYPE !== 'branch') throw new Error('Run manually from a branch.');
+          const pkg = read('package.json');
+          const lock = read('package-lock.json');
+          if ([pkg.version, lock.version, lock.packages[''].version].some(value => value !== version)) throw new Error('Package versions do not match.');
+          if (read('versions.json')[version] !== manifest.minAppVersion) throw new Error('versions.json does not match manifest.');
+          const changelog = fs.readFileSync('docs/changelog.md', 'utf8');
+          const sections = changelog.split(/^## /m).slice(1);
+          const section = sections.find(value => value.startsWith(`${version} - `));
+          if (!section) throw new Error('Missing changelog entry for release.');
+          fs.writeFileSync(`${process.env.RUNNER_TEMP}/release-notes.md`, section.slice(section.indexOf('\n') + 1).trim() + '\n');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+          NODE
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build plugin
+        run: npm run build
+
+      - name: Publish release and plugin assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_VERSION: ${{ steps.metadata.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for asset in main.js manifest.json styles.css; do
+            test -s "$asset"
+          done
+          if git show-ref --verify --quiet "refs/tags/$RELEASE_VERSION"; then
+            test "$(git rev-list -n 1 "$RELEASE_VERSION")" = "$(git rev-parse HEAD)"
+          fi
+          gh release create "$RELEASE_VERSION" main.js manifest.json styles.css \
+            --target "$GITHUB_SHA" \
+            --title "Markdown Quick Insert $RELEASE_VERSION" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            --fail-on-no-commits

@@ -22,7 +22,7 @@ export function buildTable(columns: number, rows: number, alignment: string, hea
   if (!Number.isInteger(columns) || !Number.isInteger(rows) || columns < 1 || columns > 12 || rows < 1 || rows > 50) throw new Error('Invalid table dimensions');
   const line = (values: string[]) => `| ${values.join(' | ')} |`;
   const align = alignment === 'center' ? ':---:' : alignment === 'right' ? '---:' : ':---';
-  return [line(Array.from({ length: columns }, (_, i) => `{{${header} ${i + 1}}}`)), line(Array(columns).fill(align)),
+  return [line(Array.from({ length: columns }, (_, i) => `{{${header} ${i + 1}}}`)), line(Array.from({ length: columns }, () => align)),
     ...Array.from({ length: rows }, (_, r) => line(Array.from({ length: columns }, (_, c) => `{{${cell} ${r + 1}.${c + 1}}}`)))].join('\n');
 }
 export function literal(text: string) { return { text, selection: { start: text.length, end: text.length } }; }

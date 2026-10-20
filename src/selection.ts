@@ -52,7 +52,7 @@ export function formatSelection(item: Template, selected: string, options: Selec
   if (item.id === 'block-comment') return all(`%%\n${selected}\n%%`);
   if (item.id === 'html-comment') return all(`<!-- ${selected} -->`);
   if (item.id === 'math-block') return all(`$$\n${selected}\n$$`);
-  if (item.id === 'escaped') return all(selected.replace(/[\\`*_{}\[\]()#+.!|>~=-]/g, '\\$&'));
+  if (item.id === 'escaped') return all(selected.replace(/[\\`*_{}[\]()#+.!|>~=-]/g, '\\$&'));
   throw new Error('Selection formatting requires a target');
 }
 export function boundBlock(result: Prepared, before: string, after: string): Prepared {

@@ -12,7 +12,7 @@ export default {
   displayText: 'Display text', width: 'Image width (optional pixels)', page: 'PDF page (optional)', invalidNumber: 'Enter a positive whole number, or leave empty.', fold: 'Collapse behavior', unfolded: 'Always expanded', expanded: 'Foldable, expanded', collapsed: 'Foldable, collapsed',
   command: 'Open Markdown quick insert', title: 'Insert Markdown', search: 'Search templates…', empty: 'No matching templates.',
   help: 'Type to search · Arrow keys to browse · Enter to insert · Esc to close', language: 'Language', languageHelp: 'Automatic uses the Obsidian language. Reopen the picker after changing it.', automatic: 'Automatic',
-  hotkeyHelp: 'Change Ctrl+. in Settings → Hotkeys → Markdown Quick Insert.', stale: 'The document changed while the picker was open. Reopen the picker.',
+  hotkeyHelp: 'Assign a shortcut in Settings → Hotkeys → Markdown Quick Insert.', stale: 'The document changed while the picker was open. Reopen the picker.',
   heading: 'Heading', table: 'Table', bullet: 'Bullet list', numbered: 'Numbered list', checklist: 'Checklist', quote: 'Quote', code: 'Code block', link: 'Link', callout: 'Callout', separator: 'Separator',
   headingText: 'Heading text', header: 'Header', cell: 'Example', item: 'List item', task: 'Task', quoteText: 'Quoted text', codeText: '// Your code here', linkText: 'Link text', calloutTitle: 'Title', calloutText: 'Callout content'
 };
