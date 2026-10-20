@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.10 - 2026-10-20
+
+- Register searchable language settings with Obsidian 1.13's declarative settings API.
+- Preserve the legacy settings renderer for Obsidian 1.8.7 through 1.12 and refresh translated labels after language changes without calling the deprecated display method.
+- Replace numeric input spinner !important overrides with selectors scoped to modal content.
+- Synchronize release version metadata and rebuild the plugin bundle.
+- Validation: all 87 automated tests and the production build passed. Real-host settings search, legacy rendering, numeric spinner appearance, and Community review remain unverified.
+
 ## 0.2.9 - 2026-10-20
 
 - Add GitHub Actions releases triggered by version tags or manual dispatch.

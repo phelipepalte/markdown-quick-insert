@@ -1,4 +1,4 @@
-import { Editor, getLanguage, getAllTags, MarkdownView, Modal, Notice, parseFrontMatterAliases, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { type SettingDefinitionItem, Editor, getLanguage, getAllTags, MarkdownView, Modal, Notice, parseFrontMatterAliases, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 import { Category, dictionary, filterTemplates, Language, prepareInsertion, Template, templates, expand } from './templates';
 import { buildTable, calloutTypes, Choice, codeLanguages, literal, matchesMedia, nextIdentifier, wrapSelection } from './automation';
 import { ChoiceModal, OptionsModal } from './choices';
@@ -34,12 +34,34 @@ export default class QuickInsertPlugin extends Plugin {
 
 class Settings extends PluginSettingTab {
   constructor(private plugin: QuickInsertPlugin) { super(plugin.app, plugin); }
-  display() {
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    const t = this.plugin.t;
+    return [
+      { name: t.language, desc: t.languageHelp, control: {
+        type: 'dropdown', key: 'language', defaultValue: 'auto',
+        options: { auto: t.automatic, en: 'English', 'pt-BR': 'Português brasileiro' }
+      } },
+      { name: t.hotkeyHelp }
+    ];
+  }
+  getControlValue(key: string): unknown {
+    return key === 'language' ? this.plugin.language : undefined;
+  }
+  async setControlValue(key: string, value: unknown): Promise<void> {
+    if (key !== 'language' || (value !== 'auto' && value !== 'en' && value !== 'pt-BR')) return;
+    this.plugin.language = value;
+    await this.plugin.saveData({ language: value });
+    if (typeof this.update === 'function') this.update();
+    else this.renderLegacy();
+  }
+  // Obsidian versions before 1.13 use this fallback instead of setting definitions.
+  display() { this.renderLegacy(); }
+  private renderLegacy() {
     const t = this.plugin.t;
     this.containerEl.empty();
     new Setting(this.containerEl).setName(t.language).setDesc(t.languageHelp).addDropdown(dropdown => dropdown
       .addOptions({ auto: t.automatic, en: 'English', 'pt-BR': 'Português brasileiro' }).setValue(this.plugin.language)
-      .onChange(async value => { this.plugin.language = value as Language; await this.plugin.saveData({ language: value }); this.display(); }));
+      .onChange(value => this.setControlValue('language', value)));
     this.containerEl.createEl('p', { text: t.hotkeyHelp });
   }
 }
