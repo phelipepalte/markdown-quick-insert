@@ -1,4 +1,5 @@
 export default {
+  cardView: 'Card view', markdown: 'Markdown', preview: 'Preview',
   selectionTitle: 'Format selected text', selectionHelp: 'Only compatible formats are shown. Previews use your selection. Choose a format to apply it.',
   calloutNames: { note: 'Note', abstract: 'Summary', info: 'Information', todo: 'To do', tip: 'Tip', success: 'Success', question: 'Question', warning: 'Warning', failure: 'Failure', danger: 'Danger', bug: 'Bug', example: 'Example', quote: 'Quote' },
   startText: 'Start', endText: 'End', greeting: 'Hello', reply: 'Hi',

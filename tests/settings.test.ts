@@ -21,7 +21,7 @@ it('exposes searchable language settings and persists changes through the modern
   tab.update = vi.fn();
   await tab.setControlValue('language', 'pt-BR');
   expect(tab.getControlValue('language')).toBe('pt-BR');
-  expect(plugin.saveData).toHaveBeenCalledWith({ language: 'pt-BR' });
+  expect(plugin.saveData).toHaveBeenCalledWith({ language: 'pt-BR', cardMode: 'markdown' });
   expect(tab.update).toHaveBeenCalledOnce();
   expect(tab.getSettingDefinitions()[0].name).toBe(plugin.t.language);
   expect(tab.getSettingDefinitions()[0].name).not.toBe(language.name);
@@ -39,7 +39,7 @@ it('renders and refreshes the legacy dropdown when the modern API is unavailable
   expect(tab.containerEl.querySelectorAll('select')).toHaveLength(1);
   expect(tab.containerEl.querySelector('select').value).toBe('en');
   expect(tab.containerEl.querySelector('p').textContent).toBe(plugin.t.hotkeyHelp);
-  expect(plugin.saveData).toHaveBeenCalledWith({ language: 'en' });
+  expect(plugin.saveData).toHaveBeenCalledWith({ language: 'en', cardMode: 'markdown' });
 });
 
 it('ignores unsupported language values and unrelated setting keys', async () => {
@@ -48,4 +48,16 @@ it('ignores unsupported language values and unrelated setting keys', async () =>
   await tab.setControlValue('other', 'pt-BR');
   expect(plugin.language).toBe('auto');
   expect(plugin.saveData).not.toHaveBeenCalled();
+});
+it('preserves the selected card mode when saving language settings', async () => {
+  const { plugin, tab } = await settings();
+  plugin.cardMode = 'preview'; tab.update = vi.fn();
+  await tab.setControlValue('language', 'en');
+  expect(plugin.saveData).toHaveBeenCalledWith({ language: 'en', cardMode: 'preview' });
+});
+it.each([{}, { language: 'en' }, { cardMode: 'invalid' }, { cardMode: null }])('defaults old or invalid settings to Markdown: %j', async data => {
+  const plugin = new (QuickInsertPlugin as any)({ workspace: { getActiveViewOfType: () => null } });
+  vi.spyOn(plugin, 'loadData').mockResolvedValue(data);
+  await plugin.onload();
+  expect(plugin.cardMode).toBe('markdown');
 });

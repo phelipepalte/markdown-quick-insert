@@ -1,7 +1,7 @@
-import { beforeEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import Plugin from '../src/main';
 import { ChoiceModal } from '../src/choices';
-import { modals, notices, TFile } from './obsidian-mock';
+import { Component, MarkdownRenderer, modals, notices, TFile } from './obsidian-mock';
 
 let plugin: Plugin, app: any, editor: any, files: TFile[], caches: Record<string, any>, view: any;
 beforeEach(async () => {
@@ -31,6 +31,7 @@ beforeEach(async () => {
   plugin = new (Plugin as any)(app);
   await plugin.onload();
 });
+afterEach(() => { for (const modal of [...modals]) modal.close(); vi.restoreAllMocks(); });
 function open(label: string) {
   (plugin as any).commands[0].editorCallback(editor, view);
   const button = [...document.querySelectorAll('button')].find(el => el.querySelector('strong')?.textContent === label);
@@ -222,4 +223,90 @@ it.each([0, 1])('validates table dimensions on Enter from numeric field %s', ind
   expect(editor.text).toBe('Before after');
   expect(notices.at(-1)).toBe('Use 1\u201312 columns and 1\u201350 rows.');
   expect(document.querySelector('input')).toBeTruthy();
+});
+
+function picker() { (plugin as any).commands[0].editorCallback(editor, view); return modals.at(-1) as any; }
+function setMode(value: string) {
+  const select = document.querySelector<HTMLSelectElement>('.mqi-mode')!;
+  select.value = value; select.dispatchEvent(new Event('change'));
+}
+it('renders only in Preview and reuses elements across modes, searches, and categories', async () => {
+  const render = vi.spyOn(MarkdownRenderer, 'render');
+  const modal = picker();
+  expect(render).not.toHaveBeenCalled();
+  expect(document.querySelector<HTMLSelectElement>('.mqi-mode')!.value).toBe('markdown');
+  setMode('preview');
+  await vi.waitFor(() => expect(document.querySelectorAll('.mqi-preview')).toHaveLength(document.querySelectorAll('.mqi-card').length));
+  const count = render.mock.calls.length;
+  const element = [...document.querySelectorAll('.mqi-card')].find(card => card.querySelector('strong')?.textContent === 'Bold')!.querySelector('.mqi-preview');
+  const search = document.querySelector<HTMLInputElement>('.mqi-search')!;
+  search.value = 'Bold'; search.dispatchEvent(new Event('input'));
+  await vi.waitFor(() => expect(document.querySelector('.mqi-preview')).toBe(element));
+  const category = document.querySelector<HTMLSelectElement>('.mqi-category')!;
+  category.value = 'textCategory'; category.dispatchEvent(new Event('change'));
+  await vi.waitFor(() => expect(document.querySelector('.mqi-preview')).toBe(element));
+  setMode('markdown'); setMode('preview');
+  await vi.waitFor(() => expect(document.querySelector('.mqi-preview')).toBe(element));
+  expect(render).toHaveBeenCalledTimes(count);
+  modal.close(); render.mockRestore();
+});
+it.each(['markdown', 'preview'])('inserts the original Markdown and preserves keyboard navigation in %s', mode => {
+  picker(); setMode(mode);
+  const search = document.querySelector<HTMLInputElement>('.mqi-search')!;
+  search.value = 'Bold'; search.dispatchEvent(new Event('input'));
+  search.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+  search.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+  search.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  expect(editor.text).toBe('Before **Text**after');
+  expect(editor.text.slice(editor.start, editor.end)).toBe('Text');
+});
+it('persists and restores Preview, including language changes', async () => {
+  const save = vi.spyOn(plugin, 'saveData');
+  picker(); setMode('preview');
+  expect(save).toHaveBeenCalledWith({ language: 'auto', cardMode: 'preview' });
+  modals.at(-1)!.close(); picker();
+  expect(document.querySelector<HTMLSelectElement>('.mqi-mode')!.value).toBe('preview');
+  modals.at(-1)!.close();
+  vi.spyOn(plugin, 'loadData').mockResolvedValue({ language: 'pt-BR', cardMode: 'preview' });
+  await plugin.onload();
+  expect(plugin.cardMode).toBe('preview'); expect(plugin.language).toBe('pt-BR');
+});
+it('unloads cached components and cancels queued rendering on close', async () => {
+  const render = vi.spyOn(MarkdownRenderer, 'render');
+  const modal = picker(); setMode('preview');
+  await vi.waitFor(() => expect(render).toHaveBeenCalled());
+  const components = [...modal.previews.values()].map((entry: any) => entry.component as Component);
+  modal.close(); const count = render.mock.calls.length;
+  await new Promise(resolve => setTimeout(resolve, 30));
+  expect(render).toHaveBeenCalledTimes(count);
+  expect(components.every(component => !component.loaded)).toBe(true);
+  expect(modal.previews.size).toBe(0); render.mockRestore();
+});
+it('invalidates changed content and falls back to source after rendering errors', async () => {
+  const modal = picker(); setMode('preview');
+  await vi.waitFor(() => expect(modal.previews.has('bold')).toBe(true));
+  const entry = modal.previews.get('bold'); entry.source = 'outdated';
+  const render = vi.spyOn(MarkdownRenderer, 'render').mockRejectedValueOnce(new Error('Renderer failed'));
+  const search = document.querySelector<HTMLInputElement>('.mqi-search')!;
+  search.value = 'Bold'; search.dispatchEvent(new Event('input'));
+  await vi.waitFor(() => expect(entry.component.loaded).toBe(false));
+  await vi.waitFor(() => expect(document.querySelector('.mqi-preview')?.textContent).toBe('**Text**'));
+  modal.close(); render.mockRestore();
+});
+it('reuses an in-flight render and cleans it up after closing', async () => {
+  let finish!: () => void;
+  const render = vi.spyOn(MarkdownRenderer, 'render').mockImplementationOnce(async (_app, source, element) => {
+    await new Promise<void>(resolve => { finish = resolve; });
+    element.textContent = source;
+  });
+  const modal = picker(); setMode('preview');
+  await vi.waitFor(() => expect(finish).toBeTypeOf('function'));
+  const component = [...modal.previews.values()][0].component as Component;
+  const search = document.querySelector<HTMLInputElement>('.mqi-search')!;
+  search.value = 'Heading H1'; search.dispatchEvent(new Event('input'));
+  await vi.waitFor(() => expect(document.querySelector('.mqi-preview')).not.toBeNull());
+  expect(render).toHaveBeenCalledTimes(1);
+  modal.close(); finish();
+  await new Promise(resolve => setTimeout(resolve, 20));
+  expect(component.loaded).toBe(false); expect(modal.previews.size).toBe(0);
 });

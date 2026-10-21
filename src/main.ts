@@ -1,4 +1,4 @@
-import { type SettingDefinitionItem, Editor, requireApiVersion, getLanguage, getAllTags, MarkdownView, Modal, Notice, parseFrontMatterAliases, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { Component, MarkdownRenderer, type SettingDefinitionItem, Editor, requireApiVersion, getLanguage, getAllTags, MarkdownView, Modal, Notice, parseFrontMatterAliases, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 import { Category, dictionary, filterTemplates, Language, prepareInsertion, Template, templates, expand } from './templates';
 import { buildTable, calloutTypes, Choice, codeLanguages, literal, matchesMedia, nextIdentifier, wrapSelection } from './automation';
 import { ChoiceModal, OptionsModal } from './choices';
@@ -7,6 +7,8 @@ import { captureEditor, EditorSnapshot, resolveEditorSnapshot } from './editor-c
 
 export default class QuickInsertPlugin extends Plugin {
   language: Language = 'auto';
+  cardMode: 'markdown' | 'preview' = 'markdown';
+  async saveSettings() { await this.saveData({ language: this.language, cardMode: this.cardMode }); }
   private beforeCommand?: EditorSnapshot;
   async onload() {
     const data: unknown = await this.loadData();
@@ -14,6 +16,7 @@ export default class QuickInsertPlugin extends Plugin {
       const language = data.language;
       if (language === 'auto' || language === 'en' || language === 'pt-BR') this.language = language;
     }
+    if (typeof data === 'object' && data !== null && 'cardMode' in data && data.cardMode === 'preview') this.cardMode = 'preview';
     // Capture before Obsidian's shortcut dispatch can move focus or collapse the selection.
     this.registerDomEvent(document, 'keydown', event => {
       this.beforeCommand = undefined;
@@ -50,7 +53,7 @@ class Settings extends PluginSettingTab {
   async setControlValue(key: string, value: unknown): Promise<void> {
     if (key !== 'language' || (value !== 'auto' && value !== 'en' && value !== 'pt-BR')) return;
     this.plugin.language = value;
-    await this.plugin.saveData({ language: value });
+    await this.plugin.saveSettings();
     if (requireApiVersion('1.13.0')) this.update();
     else this.renderLegacy();
   }
@@ -67,6 +70,9 @@ class Settings extends PluginSettingTab {
 }
 
 class Picker extends Modal {
+  private previews = new Map<string, { source: string; element: HTMLDivElement; component: Component }>();
+  private generation = 0;
+  private closed = false;
   private original: string;
   private from: number;
   private to: number;
@@ -88,10 +94,20 @@ class Picker extends Modal {
     this.modalEl.addClass('mqi-modal');
     this.setTitle(this.to > this.from ? this.t.selectionTitle : this.t.title);
     this.input = this.contentEl.createEl('input', { type: 'search', cls: 'mqi-search', attr: { placeholder: this.t.search, 'aria-label': this.t.search } });
-    const categories = this.contentEl.createEl('select', { cls: 'mqi-category', attr: { 'aria-label': this.t.category } });
+    const toolbar = this.contentEl.createDiv({ cls: 'mqi-toolbar' });
+    const categories = toolbar.createEl('select', { cls: 'mqi-category', attr: { 'aria-label': this.t.category } });
     categories.createEl('option', { text: this.t.all, value: '' });
     for (const category of ['textCategory', 'structureCategory', 'referenceCategory', 'mediaCategory', 'advancedCategory'] as Category[]) categories.createEl('option', { text: this.t[category], value: category });
     categories.addEventListener('change', () => { this.category = categories.value; this.render(); });
+    const mode = toolbar.createEl('select', { cls: 'mqi-mode', attr: { 'aria-label': this.t.cardView } });
+    mode.createEl('option', { text: this.t.markdown, value: 'markdown' });
+    mode.createEl('option', { text: this.t.preview, value: 'preview' });
+    mode.value = this.plugin.cardMode;
+    mode.addEventListener('change', () => {
+      this.plugin.cardMode = mode.value === 'preview' ? 'preview' : 'markdown';
+      void this.plugin.saveSettings();
+      this.render();
+    });
     if (this.to > this.from) this.contentEl.createEl('p', { text: this.t.selectionHelp, cls: 'mqi-help' });
     this.contentEl.createEl('p', { text: this.t.help, cls: 'mqi-help' });
     this.grid = this.contentEl.createDiv({ cls: 'mqi-grid', attr: { 'aria-label': this.t.title } });
@@ -114,6 +130,8 @@ class Picker extends Modal {
     this.input.focus();
   }
   private render() {
+    const generation = ++this.generation;
+    const pending: { id: string; source: string; host: HTMLElement }[] = [];
     const selected = this.original.slice(this.from, this.to);
     this.items = filterTemplates(templates(this.t), this.input.value).filter(item => (!this.category || item.category === this.category) && supportsSelection(item, selected));
     this.active = 0;
@@ -122,13 +140,54 @@ class Picker extends Modal {
       const button = this.grid.createEl('button', { cls: 'mqi-card', attr: { type: 'button' } });
       button.createEl('strong', { text: item.label });
       const preview = selected && item.id !== 'alias' ? formatSelection(item, selected, { title: this.t.calloutTitle }).text : item.source ? expand(item.source).text : this.t[item.category ?? 'referenceCategory'];
-      button.createEl('code', { text: preview });
+      if (this.plugin.cardMode === 'markdown') button.createEl('code', { text: preview });
+      else {
+        const slot = button.createDiv({ cls: 'mqi-preview-slot' });
+        slot.createEl('code', { text: preview, cls: 'mqi-preview-size', attr: { 'aria-hidden': 'true' } });
+        const host = slot.createDiv({ cls: 'mqi-preview-host' });
+        host.inert = true;
+        pending.push({ id: item.id, source: preview, host });
+      }
       button.addEventListener('focus', () => { this.active = index; this.highlight(); });
       button.addEventListener('click', () => this.choose(item));
       return button;
     });
     if (!this.items.length) this.grid.createEl('p', { text: this.t.empty, attr: { role: 'status' } });
     this.highlight();
+    if (pending.length) void this.renderPreviews(pending, generation);
+  }
+  private async renderPreviews(items: { id: string; source: string; host: HTMLElement }[], generation: number) {
+    for (const item of items) {
+      // Yield between cards so typing and mode changes can cancel obsolete work.
+      await new Promise<void>(resolve => window.setTimeout(resolve, 0));
+      if (this.closed || generation !== this.generation) return;
+      let entry = this.previews.get(item.id);
+      if (entry && entry.source !== item.source) {
+        entry.component.unload();
+        this.previews.delete(item.id);
+        entry = undefined;
+      }
+      if (!entry) {
+        const element = document.createElement('div');
+        element.className = 'mqi-preview markdown-rendered';
+        const component = new Component();
+        component.load();
+        entry = { source: item.source, element, component };
+        this.previews.set(item.id, entry);
+        item.host.append(element);
+        try {
+          await MarkdownRenderer.render(this.app, item.source, element, this.sourcePath, component);
+        } catch {
+          component.unload();
+          if (this.previews.get(item.id) === entry) this.previews.delete(item.id);
+          element.textContent = item.source;
+        }
+        // Async postprocessors may register children after the modal was closed.
+        if (this.closed) component.unload();
+      }
+      if (this.closed || generation !== this.generation) return;
+      item.host.append(entry.element);
+    }
   }
   private highlight() {
     this.buttons.forEach((button, index) => button.toggleClass('is-active', index === this.active));
@@ -263,5 +322,11 @@ class Picker extends Modal {
     }
     this.insert(item);
   }
-  onClose() { this.contentEl.empty(); }
+  onClose() {
+    this.closed = true;
+    this.generation++;
+    for (const entry of this.previews.values()) entry.component.unload();
+    this.previews.clear();
+    this.contentEl.empty();
+  }
 }

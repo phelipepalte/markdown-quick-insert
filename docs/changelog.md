@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased - Markdown / Preview
+
+- Add a persisted, localized card view selector with Markdown as the default for existing settings.
+- Render previews with the native Obsidian MarkdownRenderer and reuse live elements across searches and filters.
+- Invalidate changed template content, yield between cards, cancel obsolete work, and unload rendering components on close.
+- Bound preview content without changing insertion, placeholders, shortcuts, or Markdown card styling.
+- Keep version 0.2.14 unchanged as explicitly requested.
+- Validation: all 104 automated tests, TypeScript checking, production build, and diff whitespace checks passed. Native Obsidian rendering, light/dark appearance, and real-host performance remain unverified.
+
+
 ## 0.2.14 - 2026-10-20
 
 - Accept Enter in every table field to insert the table with the current dimensions and alignment.

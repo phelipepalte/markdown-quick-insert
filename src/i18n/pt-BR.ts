@@ -1,5 +1,6 @@
 import en from './en';
 const pt: typeof en = {
+  cardView: 'Visualização dos cards', markdown: 'Markdown', preview: 'Prévia',
   selectionTitle: 'Formatar texto selecionado', selectionHelp: 'Somente formatos compatíveis são exibidos. As prévias usam sua seleção. Escolha um formato para aplicar.',
   calloutNames: { note: 'Nota', abstract: 'Resumo', info: 'Informação', todo: 'A fazer', tip: 'Dica', success: 'Sucesso', question: 'Pergunta', warning: 'Aviso', failure: 'Falha', danger: 'Perigo', bug: 'Erro', example: 'Exemplo', quote: 'Citação' },
   startText: 'Início', endText: 'Fim', greeting: 'Olá', reply: 'Oi',

@@ -35,6 +35,7 @@ export class Plugin {
   commands: any[] = [];
   constructor(public app: any) {}
   async loadData() { return {}; }
+  async saveData(_data: unknown) {}
   addCommand(command: any) { this.commands.push(command); }
   addSettingTab() {}
   registerDomEvent(target: EventTarget, type: string, callback: EventListener, options?: boolean) { target.addEventListener(type, callback, options); }
@@ -70,3 +71,14 @@ export const getAllTags = (cache: any) => [...(cache.tags ?? []).map((tag: any) 
 export const parseFrontMatterAliases = (frontmatter: any) => frontmatter?.aliases ?? [];
 
 export function requireApiVersion(_version: string) { return true; }
+
+export class Component {
+  loaded = false;
+  load() { this.loaded = true; }
+  unload() { this.loaded = false; }
+}
+export class MarkdownRenderer {
+  static async render(_app: unknown, markdown: string, el: HTMLElement, _sourcePath: string, _component: Component) {
+    el.textContent = markdown;
+  }
+}
