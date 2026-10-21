@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.14 - 2026-10-20
+
+- Accept Enter in every table field to insert the table with the current dimensions and alignment.
+- Preserve dimension validation and ignore repeated or composing Enter events.
+- Synchronize project version metadata.
+
 ## 0.2.13 - 2026-10-20
 
 - Set the default picker shortcut to Ctrl + . on Windows/Linux and Command + . on macOS using Obsidian's Mod modifier.

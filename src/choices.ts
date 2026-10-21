@@ -26,13 +26,7 @@ export class OptionsModal extends Modal {
       const row = new Setting(this.contentEl).setName(field.label);
       if (field.options) row.addDropdown(input => {
         input.addOptions(field.options!).setValue(field.value).onChange(value => { this.values[field.key] = value; });
-        if (field.key === 'alignment') input.selectEl.addEventListener('keydown', event => {
-          if (event.key !== 'Enter' || event.isComposing || event.repeat) return;
-          event.preventDefault();
-          event.stopPropagation();
-          this.values[field.key] = input.selectEl.value;
-          this.submitValues();
-        });
+
       });
       else row.addText(input => {
         if (field.number) {
@@ -45,6 +39,17 @@ export class OptionsModal extends Modal {
 
         }
         input.setValue(field.value).onChange(value => { this.values[field.key] = value; });
+      });
+    }
+    if (this.fields.some(field => field.key === 'alignment')) {
+      this.contentEl.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' || event.isComposing || event.repeat) return;
+        if (!(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const controls = this.contentEl.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select');
+        this.fields.forEach((field, index) => { this.values[field.key] = controls[index].value; });
+        this.submitValues();
       });
     }
     new Setting(this.contentEl).addButton(button => button.setButtonText(this.t.cancel).onClick(() => this.close()))

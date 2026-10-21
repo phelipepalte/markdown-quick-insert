@@ -199,3 +199,27 @@ it('retains validation when submitting table alignment with Enter', () => {
   expect(notices.at(-1)).toBe('Use 1–12 columns and 1–50 rows.');
   expect(document.querySelector('select')).toBeTruthy();
 });
+
+it.each([0, 1, 2])('submits current table values with Enter from field %s', index => {
+  open('Table');
+  const controls = [...document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select')];
+  controls[0].value = '3';
+  controls[1].value = '4';
+  controls[2].value = 'right';
+  const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+  controls[index].dispatchEvent(enter);
+  expect(enter.defaultPrevented).toBe(true);
+  const lines = editor.text.split('\n').filter((line: string) => line.startsWith('|'));
+  expect(lines).toHaveLength(6);
+  expect(lines[1]).toBe('| ---: | ---: | ---: |');
+  expect(document.querySelector('select')).toBeNull();
+});
+it.each([0, 1])('validates table dimensions on Enter from numeric field %s', index => {
+  open('Table');
+  const inputs = [...document.querySelectorAll('input')];
+  inputs[index].value = '0';
+  inputs[index].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+  expect(editor.text).toBe('Before after');
+  expect(notices.at(-1)).toBe('Use 1\u201312 columns and 1\u201350 rows.');
+  expect(document.querySelector('input')).toBeTruthy();
+});
